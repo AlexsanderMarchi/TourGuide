@@ -1,0 +1,381 @@
+:root {
+  --fundo: #f4f6f8;
+  --sidebar: #0f2a3d;
+  --sidebar-hover: #173d57;
+  --texto-sidebar: #e3edf3;
+  --texto-suave: #8fb0c4;
+  --destaque: #2bb3a3;
+  --pino: #e4572e;
+  --largura-aberta: 260px;
+  --largura-fechada: 72px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--fundo);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.app {
+  display: flex;
+  height: 100%;
+}
+
+/* Sidebar */
+
+.sidebar {
+  width: var(--largura-aberta);
+  flex-shrink: 0;
+  background: var(--sidebar);
+  color: var(--texto-sidebar);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+  overflow: hidden;
+}
+
+.sidebar--fechada {
+  width: var(--largura-fechada);
+}
+
+.sidebar__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px;
+  gap: 8px;
+}
+
+.sidebar--fechada .sidebar__topo {
+  flex-direction: column;
+}
+
+.sidebar__logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  white-space: nowrap;
+}
+
+.sidebar__alternar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--sidebar-hover);
+  color: var(--texto-sidebar);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.sidebar__alternar svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sidebar__lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+.sidebar__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sidebar__item:hover {
+  background: var(--sidebar-hover);
+}
+
+.sidebar__icone {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  fill: var(--destaque);
+}
+
+.sidebar--fechada .sidebar__rotulo {
+  display: none;
+}
+
+.sidebar--fechada .sidebar__item {
+  justify-content: center;
+}
+
+/* Mapa */
+
+.conteudo {
+  flex: 1;
+  min-width: 0;
+}
+
+.mapa-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.mapa {
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.mapa__dica {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+  background: var(--sidebar);
+  color: var(--texto-sidebar);
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+/* Marcador de destino */
+
+.pino svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
+}
+
+.pino path {
+  fill: var(--pino);
+}
+
+.pino circle {
+  fill: #fff;
+}
+
+.destino {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.destino p {
+  margin: 0;
+}
+
+.destino__titulo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pino);
+}
+
+.destino__nome {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 8px 10px;
+  border: 1px solid #ccd6dd;
+  border-radius: 6px;
+}
+
+.destino__nome:focus {
+  outline: 2px solid var(--destaque);
+  border-color: transparent;
+}
+
+.destino__coordenadas {
+  font-size: 0.75rem;
+  color: #6b7f8c;
+}
+
+.destino__remover {
+  align-self: flex-start;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border: 1px solid #e0b4a8;
+  border-radius: 6px;
+  background: #fff;
+  color: #b8401f;
+  cursor: pointer;
+}
+
+.destino__remover:hover {
+  background: #fdf0ec;
+}
+
+.destino__titulo--busca {
+  color: var(--destaque);
+}
+
+.destino__nome-fixo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1c2b36;
+}
+
+.destino__marcar {
+  align-self: flex-start;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background: var(--pino);
+  color: #fff;
+  cursor: pointer;
+}
+
+.destino__marcar:hover {
+  filter: brightness(1.08);
+}
+
+/* Busca */
+
+.busca {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  width: min(360px, calc(100% - 32px));
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.busca__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.busca__form:focus-within {
+  outline: 2px solid var(--destaque);
+}
+
+.busca__icone {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: #6b7f8c;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.busca__campo {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 12px 0;
+  background: transparent;
+}
+
+.busca__campo::-webkit-search-cancel-button {
+  display: none;
+}
+
+.busca__limpar {
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #6b7f8c;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.busca__status {
+  margin-top: 8px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: #4a5d69;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.busca__resultados {
+  list-style: none;
+  margin-top: 8px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.busca__resultado {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid #eef2f5;
+  background: none;
+  font: inherit;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.busca__resultados li:last-child .busca__resultado {
+  border-bottom: none;
+}
+
+.busca__resultado:hover {
+  background: #f1f7f8;
+}
+
+.busca__resultado-nome {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1c2b36;
+}
+
+.busca__resultado-descricao {
+  font-size: 0.78rem;
+  color: #6b7f8c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
