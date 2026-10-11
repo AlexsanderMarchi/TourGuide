@@ -1,11 +1,22 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
+import type { Lugar } from '../types'
 
 // Busca de lugares pelo Nominatim (OpenStreetMap). A política de uso pede no
 // máximo 1 requisição por segundo, por isso a busca só roda ao enviar o
 // formulário, e não a cada tecla.
 const NOMINATIM = 'https://nominatim.openstreetmap.org/search'
 
-async function buscarLugares(termo) {
+// Campos usados da resposta do Nominatim.
+interface ResultadoNominatim {
+  place_id: number
+  name: string
+  display_name: string
+  lat: string
+  lon: string
+  boundingbox: [string, string, string, string]
+}
+
+async function buscarLugares(termo: string): Promise<Lugar[]> {
   const params = new URLSearchParams({
     q: termo,
     format: 'jsonv2',
@@ -14,7 +25,7 @@ async function buscarLugares(termo) {
   })
   const resposta = await fetch(`${NOMINATIM}?${params}`)
   if (!resposta.ok) throw new Error(`Nominatim respondeu ${resposta.status}`)
-  const dados = await resposta.json()
+  const dados: ResultadoNominatim[] = await resposta.json()
 
   return dados.map((lugar) => ({
     id: lugar.place_id,
@@ -29,13 +40,17 @@ async function buscarLugares(termo) {
   }))
 }
 
-export default function BuscaLugar({ onSelecionar }) {
+interface BuscaLugarProps {
+  onSelecionar: (lugar: Lugar) => void
+}
+
+export default function BuscaLugar({ onSelecionar }: BuscaLugarProps) {
   const [termo, setTermo] = useState('')
-  const [resultados, setResultados] = useState(null)
+  const [resultados, setResultados] = useState<Lugar[] | null>(null)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState(false)
 
-  async function enviar(e) {
+  async function enviar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const texto = termo.trim()
     if (!texto || carregando) return
@@ -52,7 +67,7 @@ export default function BuscaLugar({ onSelecionar }) {
     }
   }
 
-  function selecionar(lugar) {
+  function selecionar(lugar: Lugar) {
     setResultados(null)
     setTermo(lugar.nome)
     onSelecionar(lugar)
@@ -90,7 +105,7 @@ export default function BuscaLugar({ onSelecionar }) {
       {erro && <p className="busca__status">Não foi possível buscar agora. Tente de novo.</p>}
       {resultados?.length === 0 && <p className="busca__status">Nenhum lugar encontrado.</p>}
 
-      {resultados?.length > 0 && (
+      {resultados && resultados.length > 0 && (
         <ul className="busca__resultados">
           {resultados.map((lugar) => (
             <li key={lugar.id}>

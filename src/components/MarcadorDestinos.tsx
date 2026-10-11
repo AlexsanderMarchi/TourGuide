@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import L from 'leaflet'
 import { Marker, Popup, useMapEvents } from 'react-leaflet'
+import type { Destino } from '../types'
 
 // Pino próprio em vez do ícone padrão do Leaflet, cujas imagens não são
 // encontradas pelo Vite sem configuração extra.
@@ -12,8 +13,20 @@ const iconeDestino = L.divIcon({
   popupAnchor: [0, -34],
 })
 
-export default function MarcadorDestinos({ destinos, onAdicionar, onRenomear, onRemover }) {
-  const [recemCriado, setRecemCriado] = useState(null)
+interface MarcadorDestinosProps {
+  destinos: Destino[]
+  onAdicionar: (lat: number, lng: number) => string
+  onRenomear: (id: string, nome: string) => void
+  onRemover: (id: string) => void
+}
+
+export default function MarcadorDestinos({
+  destinos,
+  onAdicionar,
+  onRenomear,
+  onRemover,
+}: MarcadorDestinosProps) {
+  const [recemCriado, setRecemCriado] = useState<string | null>(null)
   const popupAberto = useRef(false)
 
   const map = useMapEvents({
@@ -22,7 +35,7 @@ export default function MarcadorDestinos({ destinos, onAdicionar, onRenomear, on
     click(e) {
       // O clique em "Remover" tira o popup da tela e ainda chega ao mapa;
       // sem este teste ele criaria um marcador novo no mesmo lugar.
-      if (!map.getContainer().contains(e.originalEvent.target)) return
+      if (!map.getContainer().contains(e.originalEvent.target as Node)) return
 
       // Com um popup aberto, o clique no mapa só o fecha (o MapContainer usa
       // closePopupOnClick={false} para essa decisão ficar aqui).

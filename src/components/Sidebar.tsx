@@ -1,4 +1,8 @@
-const icones = {
+import type { ReactNode } from 'react'
+
+type ItemId = 'descubra' | 'planejamentos' | 'viagens' | 'conta'
+
+const icones: Record<ItemId, ReactNode> = {
   descubra: (
     <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.2 5.8-2.1 6.3-6.3 2.1 2.1-6.3 6.3-2.1Z" />
   ),
@@ -13,14 +17,19 @@ const icones = {
   ),
 }
 
-const itens = [
+const itens: { id: ItemId; rotulo: string }[] = [
   { id: 'descubra', rotulo: 'Descubra novos lugares' },
   { id: 'planejamentos', rotulo: 'Planejamentos' },
   { id: 'viagens', rotulo: 'Minhas viagens' },
   { id: 'conta', rotulo: 'Conta' },
 ]
 
-export default function Sidebar({ aberta, onAlternar }) {
+interface SidebarProps {
+  aberta: boolean
+  onAlternar: () => void
+}
+
+export default function Sidebar({ aberta, onAlternar }: SidebarProps) {
   return (
     <aside className={`sidebar${aberta ? '' : ' sidebar--fechada'}`}>
       <div className="sidebar__topo">

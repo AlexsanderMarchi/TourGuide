@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { MapContainer, Popup, TileLayer, ZoomControl, useMap } from 'react-leaflet'
+import type { Map as LeafletMap } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import BuscaLugar from './BuscaLugar'
 import MarcadorDestinos from './MarcadorDestinos'
 import useDestinos from '../hooks/useDestinos'
+import type { Lugar } from '../types'
 
 // O Leaflet calcula o tamanho do mapa uma vez; quando a sidebar abre ou fecha,
 // a área muda e é preciso avisá-lo depois da transição.
-function AjustarTamanho({ gatilho }) {
+function AjustarTamanho({ gatilho }: { gatilho: unknown }) {
   const map = useMap()
 
   useEffect(() => {
@@ -18,17 +20,22 @@ function AjustarTamanho({ gatilho }) {
   return null
 }
 
-export default function WorldMap({ sidebarAberta }) {
-  const { destinos, adicionar, renomear, remover } = useDestinos()
-  const [map, setMap] = useState(null)
-  const [lugarBuscado, setLugarBuscado] = useState(null)
+interface WorldMapProps {
+  sidebarAberta: boolean
+}
 
-  function irParaLugar(lugar) {
+export default function WorldMap({ sidebarAberta }: WorldMapProps) {
+  const { destinos, adicionar, renomear, remover } = useDestinos()
+  const [map, setMap] = useState<LeafletMap | null>(null)
+  const [lugarBuscado, setLugarBuscado] = useState<Lugar | null>(null)
+
+  function irParaLugar(lugar: Lugar) {
     setLugarBuscado(lugar)
     map?.flyToBounds(lugar.limites, { maxZoom: 12, duration: 1.5 })
   }
 
   function marcarLugarBuscado() {
+    if (!lugarBuscado) return
     adicionar(lugarBuscado.lat, lugarBuscado.lng, lugarBuscado.nome)
     setLugarBuscado(null)
   }

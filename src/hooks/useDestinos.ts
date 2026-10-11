@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import type { Destino } from '../types'
 
 const CHAVE = 'tourguide:destinos'
 
-function carregar() {
+function carregar(): Destino[] {
   try {
-    return JSON.parse(localStorage.getItem(CHAVE)) ?? []
+    return JSON.parse(localStorage.getItem(CHAVE) ?? '[]') ?? []
   } catch {
     return []
   }
@@ -12,7 +13,7 @@ function carregar() {
 
 // Lugares que o usuário quer visitar, salvos no navegador.
 export default function useDestinos() {
-  const [destinos, setDestinos] = useState(carregar)
+  const [destinos, setDestinos] = useState<Destino[]>(carregar)
 
   useEffect(() => {
     try {
@@ -22,17 +23,17 @@ export default function useDestinos() {
     }
   }, [destinos])
 
-  function adicionar(lat, lng, nome = '') {
-    const novo = { id: crypto.randomUUID(), lat, lng, nome }
+  function adicionar(lat: number, lng: number, nome = ''): string {
+    const novo: Destino = { id: crypto.randomUUID(), lat, lng, nome }
     setDestinos((atuais) => [...atuais, novo])
     return novo.id
   }
 
-  function renomear(id, nome) {
+  function renomear(id: string, nome: string) {
     setDestinos((atuais) => atuais.map((d) => (d.id === id ? { ...d, nome } : d)))
   }
 
-  function remover(id) {
+  function remover(id: string) {
     setDestinos((atuais) => atuais.filter((d) => d.id !== id))
   }
 
