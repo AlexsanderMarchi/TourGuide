@@ -1,8 +1,5 @@
 import { useState, type FormEvent } from "react";
 
-const USUARIO = "teste";
-const SENHA = "123";
-
 interface LoginProps {
   onEntrar: () => void;
 }
@@ -11,13 +8,27 @@ export default function Login({ onEntrar }: LoginProps) {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  function enviar(evento: FormEvent<HTMLFormElement>) {
+  async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
-    if (usuario === USUARIO && senha === SENHA) {
-      onEntrar();
-    } else {
-      setErro("Usuário ou senha inválidos.");
+    setErro("");
+    setEnviando(true);
+    try {
+      const resposta = await fetch("/api/auth/login", {
+        method: "POST",
+        body: new URLSearchParams({ username: usuario, password: senha }),
+      });
+      if (resposta.ok) {
+        // o navegador já guardou o cookie de sessão
+        onEntrar();
+      } else {
+        setErro("Usuário ou senha inválidos.");
+      }
+    } catch {
+      setErro("Não foi possível conectar ao servidor.");
+    } finally {
+      setEnviando(false);
     }
   }
 
@@ -51,8 +62,8 @@ export default function Login({ onEntrar }: LoginProps) {
 
         {erro && <p className="login__erro">{erro}</p>}
 
-        <button className="login__entrar" type="submit">
-          Entrar
+        <button className="login__entrar" type="submit" disabled={enviando}>
+          {enviando ? "Entrando..." : "Entrar"}
         </button>
       </form>
     </div>

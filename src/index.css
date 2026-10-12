@@ -454,3 +454,8 @@ body {
 .login__entrar:hover {
   filter: brightness(1.08);
 }
+
+.login__entrar:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
