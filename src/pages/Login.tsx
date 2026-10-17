@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
-interface LoginProps {
-  onEntrar: () => void;
-}
-
-export default function Login({ onEntrar }: LoginProps) {
+export default function Login() {
+  const { logado, entrar } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const destino = (location.state as { de?: string } | null)?.de ?? "/";
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
@@ -21,7 +23,8 @@ export default function Login({ onEntrar }: LoginProps) {
       });
       if (resposta.ok) {
         // o navegador já guardou o cookie de sessão
-        onEntrar();
+        entrar();
+        navigate(destino, { replace: true });
       } else {
         setErro("Usuário ou senha inválidos.");
       }
@@ -30,6 +33,10 @@ export default function Login({ onEntrar }: LoginProps) {
     } finally {
       setEnviando(false);
     }
+  }
+
+  if (logado) {
+    return <Navigate to={destino} replace />;
   }
 
   return (

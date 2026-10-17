@@ -1,22 +1,16 @@
-import { useState } from 'react'
-import Login from './components/Login'
-import Sidebar from './components/Sidebar'
-import WorldMap from './components/WorldMap'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import RotaProtegida from './auth/RotaProtegida'
+import Inicio from './pages/Inicio'
+import Login from './pages/Login'
 
 export default function App() {
-  const [logado, setLogado] = useState(false)
-  const [sidebarAberta, setSidebarAberta] = useState(true)
-
-  if (!logado) {
-    return <Login onEntrar={() => setLogado(true)} />
-  }
-
   return (
-    <div className="app">
-      <Sidebar aberta={sidebarAberta} onAlternar={() => setSidebarAberta((a) => !a)} />
-      <main className="conteudo">
-        <WorldMap sidebarAberta={sidebarAberta} />
-      </main>
-    </div>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route element={<RotaProtegida />}>
+        <Route path="/" element={<Inicio />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
