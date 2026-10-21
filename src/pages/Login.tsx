@@ -19,7 +19,8 @@ export default function Login() {
     try {
       const resposta = await fetch("/api/auth/login", {
         method: "POST",
-        body: new URLSearchParams({ username: usuario, password: senha }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: usuario, password: senha }),
       });
       if (resposta.ok) {
         // o navegador já guardou o cookie de sessão
