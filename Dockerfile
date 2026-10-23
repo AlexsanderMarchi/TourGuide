@@ -3,7 +3,7 @@
 
 # Etapa 1 (build) que usa a imagem do node para instalar as dependencias
 # e compilar o projeto. No final é gerado uma pasta /dist
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
