@@ -23,8 +23,8 @@ export default function Login() {
         body: JSON.stringify({ username: usuario, password: senha }),
       });
       if (resposta.ok) {
-        // o navegador já guardou o cookie de sessão
-        entrar();
+        const { tokenJWT } = await resposta.json();
+        entrar(tokenJWT);
         navigate(destino, { replace: true });
       } else {
         setErro("Usuário ou senha inválidos.");

@@ -15,3 +15,8 @@ export interface Lugar {
   lng: number
   limites: LatLngBoundsExpression
 }
+
+export interface Usuario {
+  id: number
+  nome: string
+}

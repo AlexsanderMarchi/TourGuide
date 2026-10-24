@@ -459,3 +459,63 @@ body {
   opacity: 0.7;
   cursor: wait;
 }
+
+/* Usuários */
+
+.usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.usuarios__titulo {
+  font-size: 1.5rem;
+  color: var(--sidebar);
+}
+
+.usuarios__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.usuarios__form .login__rotulo {
+  flex: 1;
+  min-width: 160px;
+}
+
+.usuarios__vazio {
+  font-size: 0.9rem;
+  color: #6b7f8c;
+}
+
+.usuarios__lista {
+  list-style: none;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.usuarios__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eef2f5;
+  font-size: 0.95rem;
+  color: #1c2b36;
+}
+
+.usuarios__item:last-child {
+  border-bottom: none;
+}
