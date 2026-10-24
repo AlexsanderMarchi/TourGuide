@@ -1,21 +1,28 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
+import { token } from '../api'
 
 interface Auth {
   logado: boolean
-  entrar: () => void
+  entrar: (novoToken: string) => void
   sair: () => void
 }
 
 const AuthContext = createContext<Auth | null>(null)
 
-// A sessão em si fica no cookie que o backend define; aqui só guardamos se o login deu certo.
+// O token fica no sessionStorage, então sobrevive ao F5 mas some ao fechar a aba.
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [logado, setLogado] = useState(false)
+  const [logado, setLogado] = useState(() => token.ler() !== null)
 
   const valor: Auth = {
     logado,
-    entrar: () => setLogado(true),
-    sair: () => setLogado(false),
+    entrar: (novoToken) => {
+      token.salvar(novoToken)
+      setLogado(true)
+    },
+    sair: () => {
+      token.apagar()
+      setLogado(false)
+    },
   }
 
   return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>
