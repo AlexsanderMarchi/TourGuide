@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 export default function Login() {
-  const { logado, entrar } = useAuth();
+  const logado = useAuthStore((estado) => estado.logado);
+  const entrar = useAuthStore((estado) => estado.entrar);
   const navigate = useNavigate();
   const location = useLocation();
   const destino = (location.state as { de?: string } | null)?.de ?? "/";
@@ -20,11 +21,17 @@ export default function Login() {
       const resposta = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ username: usuario, password: senha }),
       });
       if (resposta.ok) {
-        const { tokenJWT } = await resposta.json();
-        entrar(tokenJWT);
+        // o token chega no cookie HttpOnly (Set-Cookie); o corpo só diz se falta o A2F
+        const { a2f } = await resposta.json();
+        if (a2f) {
+          setErro("Verificação em duas etapas ainda não é suportada nesta tela.");
+          return;
+        }
+        entrar();
         navigate(destino, { replace: true });
       } else {
         setErro("Usuário ou senha inválidos.");

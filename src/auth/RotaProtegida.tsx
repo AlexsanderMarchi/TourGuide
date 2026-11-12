@@ -1,9 +1,9 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { useAuth } from './AuthContext'
+import { useAuthStore } from '../store/authStore'
 
 // Manda para /login quem não está logado, lembrando de onde veio.
 export default function RotaProtegida() {
-  const { logado } = useAuth()
+  const logado = useAuthStore((estado) => estado.logado)
   const location = useLocation()
 
   if (!logado) {
