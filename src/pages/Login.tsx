@@ -11,6 +11,9 @@ export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  // quando o usuário tem A2F, depois da senha certa o login pede o código
+  const [etapa, setEtapa] = useState<"credenciais" | "a2f">("credenciais");
+  const [codigo, setCodigo] = useState("");
   const [enviando, setEnviando] = useState(false);
 
   async function enviar(evento: FormEvent<HTMLFormElement>) {
@@ -28,7 +31,7 @@ export default function Login() {
         // o token chega no cookie HttpOnly (Set-Cookie); o corpo só diz se falta o A2F
         const { a2f } = await resposta.json();
         if (a2f) {
-          setErro("Verificação em duas etapas ainda não é suportada nesta tela.");
+          setEtapa("a2f");
           return;
         }
         entrar();
@@ -43,8 +46,84 @@ export default function Login() {
     }
   }
 
+  async function verificarCodigo(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    setErro("");
+    setEnviando(true);
+    try {
+      const resposta = await fetch("/api/auth/login/verificar-a2f", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ email: usuario, codigo: codigo.trim() }),
+      });
+      if (resposta.ok) {
+        // código certo: o servidor devolve o token no cookie HttpOnly
+        entrar(true);
+        navigate(destino, { replace: true });
+      } else {
+        setErro("Código inválido ou expirado.");
+      }
+    } catch {
+      setErro("Não foi possível conectar ao servidor.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  function voltarParaCredenciais() {
+    setEtapa("credenciais");
+    setCodigo("");
+    setSenha("");
+    setErro("");
+  }
+
   if (logado) {
     return <Navigate to={destino} replace />;
+  }
+
+  if (etapa === "a2f") {
+    return (
+      <div className="login">
+        <form className="login__cartao" onSubmit={verificarCodigo}>
+          <h1 className="login__logo">TourGuide</h1>
+          <p className="login__subtitulo">
+            Digite o código de verificação em duas etapas
+          </p>
+
+          <label className="login__rotulo">
+            Código
+            <input
+              className="login__campo login__campo--codigo"
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value)}
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              autoFocus
+            />
+          </label>
+
+          {erro && <p className="login__erro">{erro}</p>}
+
+          <button
+            className="login__entrar"
+            type="submit"
+            disabled={enviando || !codigo.trim()}
+          >
+            {enviando ? "Verificando..." : "Verificar"}
+          </button>
+
+          <button
+            className="login__voltar"
+            type="button"
+            onClick={voltarParaCredenciais}
+            disabled={enviando}
+          >
+            Voltar
+          </button>
+        </form>
+      </div>
+    );
   }
 
   return (

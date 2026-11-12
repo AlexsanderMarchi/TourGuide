@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore'
 
 type ItemId = 'descubra' | 'planejamentos' | 'viagens' | 'usuarios' | 'conta'
 
@@ -26,7 +27,7 @@ const itens: { id: ItemId; rotulo: string; rota?: string }[] = [
   { id: 'planejamentos', rotulo: 'Planejamentos' },
   { id: 'viagens', rotulo: 'Minhas viagens' },
   { id: 'usuarios', rotulo: 'Usuários', rota: '/usuarios' },
-  { id: 'conta', rotulo: 'Conta' },
+  { id: 'conta', rotulo: 'Conta', rota: '/conta' },
 ]
 
 interface SidebarProps {
@@ -36,6 +37,12 @@ interface SidebarProps {
 
 export default function Sidebar({ aberta, onAlternar }: SidebarProps) {
   const navigate = useNavigate()
+  const sair = useAuthStore((estado) => estado.sair)
+
+  async function handleSair() {
+    await sair()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <aside className={`sidebar${aberta ? '' : ' sidebar--fechada'}`}>
@@ -71,6 +78,19 @@ export default function Sidebar({ aberta, onAlternar }: SidebarProps) {
           ))}
         </ul>
       </nav>
+
+      <div className="sidebar__rodape">
+        <button
+          className="sidebar__item sidebar__item--sair"
+          title={aberta ? undefined : 'Sair'}
+          onClick={handleSair}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="sidebar__icone">
+            <path d="M5 3h8v2H5v14h8v2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm11 4 5 5-5 5-1.4-1.4 2.6-2.6H9v-2h8.2l-2.6-2.6L16 7Z" />
+          </svg>
+          <span className="sidebar__rotulo">Sair</span>
+        </button>
+      </div>
     </aside>
   )
 }
