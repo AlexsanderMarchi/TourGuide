@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import CampoSenha from '../components/CampoSenha'
 import Sidebar from '../components/Sidebar'
 import { api } from '../api'
 import { useAuthStore } from '../store/authStore'
@@ -23,6 +24,14 @@ export default function Conta() {
   const [codigo, setCodigo] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
+
+  const [alterandoSenha, setAlterandoSenha] = useState(false)
+  const [senhaAtual, setSenhaAtual] = useState('')
+  const [novaSenha, setNovaSenha] = useState('')
+  const [novaSenhaConfirmacao, setNovaSenhaConfirmacao] = useState('')
+  const [alterandoEnvio, setAlterandoEnvio] = useState(false)
+  const [senhaErro, setSenhaErro] = useState('')
+  const [senhaSucesso, setSenhaSucesso] = useState('')
 
   const iniciais = contaTemplate.nome
     .split(' ')
@@ -70,6 +79,48 @@ export default function Conta() {
     }
   }
 
+  function fecharAlterarSenha() {
+    setAlterandoSenha(false)
+    setSenhaAtual('')
+    setNovaSenha('')
+    setNovaSenhaConfirmacao('')
+    setSenhaErro('')
+  }
+
+  async function alterarSenha(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault()
+    setSenhaErro('')
+    // o backend também valida, mas assim o usuário não precisa esperar a requisição
+    if (novaSenha !== novaSenhaConfirmacao) {
+      setSenhaErro('A nova senha e a confirmação não conferem.')
+      return
+    }
+    setAlterandoEnvio(true)
+    try {
+      const resposta = await api('/api/usuario/alterar-senha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senhaAtual, novaSenha, novaSenhaConfirmacao }),
+      })
+      if (resposta.ok) {
+        fecharAlterarSenha()
+        setSenhaSucesso('Senha alterada com sucesso.')
+      } else if (resposta.status === 400) {
+        // regra de negócio (ex.: senha atual errada) vem como texto no corpo
+        const mensagem = await resposta.text()
+        setSenhaErro(
+          mensagem && !mensagem.startsWith('[') ? mensagem : 'Preencha todos os campos corretamente.',
+        )
+      } else {
+        setSenhaErro('Não foi possível alterar a senha.')
+      }
+    } catch {
+      setSenhaErro('Não foi possível conectar ao servidor.')
+    } finally {
+      setAlterandoEnvio(false)
+    }
+  }
+
   function cancelar() {
     setEtapa('pergunta')
     setUrlQrCode('')
@@ -100,15 +151,82 @@ export default function Conta() {
         <section className="conta__cartao">
           <h2 className="conta__subtitulo">Configurações da conta</h2>
 
-          <div className="conta__opcao">
-            <div>
-              <p className="conta__opcao-titulo">Senha</p>
-              <p className="conta__opcao-descricao">Altere a senha usada para entrar no TourGuide.</p>
+          <div className="conta__opcao conta__opcao--coluna">
+            <div className="conta__opcao-linha">
+              <div>
+                <p className="conta__opcao-titulo">Senha</p>
+                <p className="conta__opcao-descricao">Altere a senha usada para entrar no TourGuide.</p>
+              </div>
+              {!alterandoSenha && (
+                <button
+                  className="conta__botao conta__botao--secundario"
+                  type="button"
+                  onClick={() => {
+                    setAlterandoSenha(true)
+                    setSenhaSucesso('')
+                  }}
+                >
+                  Alterar senha
+                </button>
+              )}
             </div>
-            {/* TODO: ligar no /api/usuario/alterar-senha */}
-            <button className="conta__botao conta__botao--secundario" type="button" disabled>
-              Alterar senha
-            </button>
+
+            {alterandoSenha && (
+              <form className="conta__a2f" onSubmit={alterarSenha}>
+                <label className="login__rotulo">
+                  Senha atual
+                  <CampoSenha
+                    className="login__campo"
+                    value={senhaAtual}
+                    onChange={(e) => setSenhaAtual(e.target.value)}
+                    autoComplete="current-password"
+                    autoFocus
+                  />
+                </label>
+
+                <label className="login__rotulo">
+                  Nova senha
+                  <CampoSenha
+                    className="login__campo"
+                    value={novaSenha}
+                    onChange={(e) => setNovaSenha(e.target.value)}
+                    autoComplete="new-password"
+                  />
+                </label>
+
+                <label className="login__rotulo">
+                  Confirmar nova senha
+                  <CampoSenha
+                    className="login__campo"
+                    value={novaSenhaConfirmacao}
+                    onChange={(e) => setNovaSenhaConfirmacao(e.target.value)}
+                    autoComplete="new-password"
+                  />
+                </label>
+
+                {senhaErro && <p className="login__erro">{senhaErro}</p>}
+
+                <div className="conta__acoes">
+                  <button
+                    className="conta__botao"
+                    type="submit"
+                    disabled={alterandoEnvio || !senhaAtual || !novaSenha || !novaSenhaConfirmacao}
+                  >
+                    {alterandoEnvio ? 'Salvando...' : 'Salvar nova senha'}
+                  </button>
+                  <button
+                    className="conta__botao conta__botao--secundario"
+                    type="button"
+                    onClick={fecharAlterarSenha}
+                    disabled={alterandoEnvio}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {senhaSucesso && <p className="conta__sucesso">{senhaSucesso}</p>}
           </div>
 
           <div className="conta__opcao conta__opcao--coluna">

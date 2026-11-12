@@ -492,6 +492,50 @@ body {
   text-decoration: underline;
 }
 
+/* Campo de senha com olhinho */
+
+.campo-senha {
+  position: relative;
+  display: flex;
+}
+
+.campo-senha .login__campo {
+  flex: 1;
+  min-width: 0;
+  padding-right: 44px;
+}
+
+.campo-senha__olho {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #6b7f8c;
+  cursor: pointer;
+}
+
+.campo-senha__olho:hover {
+  color: var(--sidebar);
+  background: #eef2f5;
+}
+
+.campo-senha__olho svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* Conta */
 
 .conta {
@@ -639,6 +683,11 @@ body {
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.conta__sucesso {
+  font-size: 0.85rem;
+  color: #1f8a5b;
 }
 
 .conta__a2f {
