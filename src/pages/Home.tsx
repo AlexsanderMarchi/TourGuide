@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import WorldMap from '../components/WorldMap'
 
-export default function Inicio() {
+export default function Home() {
   const [sidebarAberta, setSidebarAberta] = useState(true)
 
   return (

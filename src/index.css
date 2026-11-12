@@ -134,6 +134,17 @@ body {
   justify-content: center;
 }
 
+/* fica colado no fim da sidebar (que é flex column) */
+.sidebar__rodape {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--sidebar-hover);
+}
+
+.sidebar__item--sair .sidebar__icone {
+  fill: var(--pino);
+}
+
 /* Mapa */
 
 .conteudo {
@@ -458,6 +469,252 @@ body {
 .login__entrar:disabled {
   opacity: 0.7;
   cursor: wait;
+}
+
+.login__campo--codigo {
+  font-size: 1.3rem;
+  letter-spacing: 0.4em;
+  text-align: center;
+}
+
+.login__voltar {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 4px;
+  border: none;
+  background: none;
+  color: #6b7f8c;
+  cursor: pointer;
+}
+
+.login__voltar:hover {
+  color: var(--sidebar);
+  text-decoration: underline;
+}
+
+/* Campo de senha com olhinho */
+
+.campo-senha {
+  position: relative;
+  display: flex;
+}
+
+.campo-senha .login__campo {
+  flex: 1;
+  min-width: 0;
+  padding-right: 44px;
+}
+
+.campo-senha__olho {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: #6b7f8c;
+  cursor: pointer;
+}
+
+.campo-senha__olho:hover {
+  color: var(--sidebar);
+  background: #eef2f5;
+}
+
+.campo-senha__olho svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Conta */
+
+.conta {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.conta__titulo {
+  font-size: 1.5rem;
+  color: var(--sidebar);
+}
+
+.conta__cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.conta__perfil {
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.conta__foto {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--sidebar);
+  color: var(--texto-sidebar);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.conta__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.conta__nome {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1c2b36;
+}
+
+.conta__email {
+  font-size: 0.95rem;
+  color: #6b7f8c;
+}
+
+.conta__subtitulo {
+  font-size: 1.1rem;
+  color: var(--sidebar);
+}
+
+.conta__opcao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eef2f5;
+}
+
+.conta__opcao--coluna {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.conta__opcao-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.conta__opcao-titulo {
+  font-weight: 600;
+  color: #1c2b36;
+}
+
+.conta__opcao-descricao {
+  font-size: 0.85rem;
+  color: #6b7f8c;
+}
+
+.conta__botao {
+  flex-shrink: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--destaque);
+  color: #fff;
+  cursor: pointer;
+}
+
+.conta__botao:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.conta__botao:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.conta__botao--secundario {
+  background: #eef2f5;
+  color: #1c2b36;
+}
+
+.conta__ativa {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f8a5b;
+}
+
+.conta__ativa svg {
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+  border-radius: 50%;
+  background: #1f8a5b;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.conta__sucesso {
+  font-size: 0.85rem;
+  color: #1f8a5b;
+}
+
+.conta__a2f {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.conta__passos {
+  padding-left: 20px;
+  font-size: 0.9rem;
+  color: #1c2b36;
+}
+
+.conta__qrcode {
+  align-self: center;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #eef2f5;
+  border-radius: 12px;
+  line-height: 0;
+}
+
+.conta__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 /* Usuários */
