@@ -582,16 +582,103 @@ body {
   font-weight: 700;
 }
 
+.conta__foto {
+  position: relative;
+  padding: 0;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.conta__foto:disabled {
+  cursor: default;
+}
+
 .conta__foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+.conta__foto-sobreposicao {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.conta__foto:not(:disabled):hover .conta__foto-sobreposicao,
+.conta__foto:focus-visible .conta__foto-sobreposicao {
+  opacity: 1;
+}
+
+.conta__foto-sobreposicao svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.modal-foto__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  color: #6b7f8c;
+  font-size: 0.9rem;
+}
+
+.modal-foto__conteudo strong {
+  color: #1c2b36;
+}
+
+.modal-foto__erro {
+  margin-top: 12px;
+}
+
+.modal-foto__icone {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: var(--destaque);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.modal-foto__preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .conta__nome {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   font-size: 1.2rem;
   font-weight: 700;
   color: #1c2b36;
+}
+
+.conta__tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(43, 179, 163, 0.15);
+  color: #1d8578;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .conta__email {

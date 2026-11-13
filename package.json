@@ -10,6 +10,7 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "antd": "^5.29.3",
     "leaflet": "1.9",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",

@@ -1,21 +1,51 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import CampoSenha from '../components/CampoSenha'
+import ModalFoto from '../components/ModalFoto'
 import Sidebar from '../components/Sidebar'
 import { api } from '../api'
 import { useAuthStore } from '../store/authStore'
 
-// TODO: trocar pelos dados reais quando existir a rota com os dados da conta
-const contaTemplate = {
-  nome: 'Nome do usuário',
-  email: 'usuario@email.com',
-  foto: null as string | null,
+type DadosConta = {
+  nome: string
+  email: string
+  fotoPerfil: string | null
+  perfil: string
 }
 
 type EtapaA2f = 'pergunta' | 'qrcode'
 
+// o front envia a foto como data URL, mas se o backend devolver só o base64 puro, montamos o prefixo
+function srcFoto(foto: string) {
+  return foto.startsWith('data:') ? foto : `data:image/jpeg;base64,${foto}`
+}
+
 export default function Conta() {
   const [sidebarAberta, setSidebarAberta] = useState(true)
+  const [conta, setConta] = useState<DadosConta | null>(null)
+  const [contaErro, setContaErro] = useState('')
+  const [alterandoFoto, setAlterandoFoto] = useState(false)
+
+  useEffect(() => {
+    let cancelado = false
+    async function carregarConta() {
+      try {
+        const resposta = await api('/api/usuario/me')
+        if (cancelado) return
+        if (resposta.ok) {
+          setConta(await resposta.json())
+        } else {
+          setContaErro('Não foi possível carregar os dados da conta.')
+        }
+      } catch {
+        if (!cancelado) setContaErro('Não foi possível conectar ao servidor.')
+      }
+    }
+    carregarConta()
+    return () => {
+      cancelado = true
+    }
+  }, [])
   const a2fAtiva = useAuthStore((estado) => estado.a2fAtiva)
   const marcarA2fAtiva = useAuthStore((estado) => estado.marcarA2fAtiva)
 
@@ -33,8 +63,9 @@ export default function Conta() {
   const [senhaErro, setSenhaErro] = useState('')
   const [senhaSucesso, setSenhaSucesso] = useState('')
 
-  const iniciais = contaTemplate.nome
+  const iniciais = (conta?.nome ?? '')
     .split(' ')
+    .filter(Boolean)
     .slice(0, 2)
     .map((parte) => parte[0])
     .join('')
@@ -135,16 +166,47 @@ export default function Conta() {
         <h1 className="conta__titulo">Conta</h1>
 
         <section className="conta__cartao conta__perfil">
-          <div className="conta__foto">
-            {contaTemplate.foto ? (
-              <img src={contaTemplate.foto} alt={`Foto de ${contaTemplate.nome}`} />
+          <button
+            className="conta__foto"
+            type="button"
+            onClick={() => setAlterandoFoto(true)}
+            disabled={!conta}
+            aria-label="Alterar foto de perfil"
+          >
+            {conta?.fotoPerfil ? (
+              <img src={srcFoto(conta.fotoPerfil)} alt={`Foto de ${conta.nome}`} />
             ) : (
               <span aria-hidden="true">{iniciais}</span>
             )}
-          </div>
+            <span className="conta__foto-sobreposicao" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                <circle cx="12" cy="12.5" r="3.5" />
+              </svg>
+            </span>
+          </button>
+          <ModalFoto
+            aberto={alterandoFoto}
+            onFechar={() => setAlterandoFoto(false)}
+            onSalvar={(fotoPerfil) => {
+              setConta((atual) => (atual ? { ...atual, fotoPerfil } : atual))
+              setAlterandoFoto(false)
+            }}
+          />
           <div>
-            <p className="conta__nome">{contaTemplate.nome}</p>
-            <p className="conta__email">{contaTemplate.email}</p>
+            {conta ? (
+              <>
+                <p className="conta__nome">
+                  {conta.nome}
+                  {conta.perfil === 'ADMIN' && <span className="conta__tag">Admin</span>}
+                </p>
+                <p className="conta__email">{conta.email}</p>
+              </>
+            ) : contaErro ? (
+              <p className="login__erro">{contaErro}</p>
+            ) : (
+              <p className="conta__email">Carregando...</p>
+            )}
           </div>
         </section>
 
