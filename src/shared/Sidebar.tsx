@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import clsx from 'clsx'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
@@ -44,51 +45,74 @@ export default function Sidebar({ aberta, onAlternar }: SidebarProps) {
     navigate('/login', { replace: true })
   }
 
+  const classeItem = clsx(
+    'flex w-full cursor-pointer items-center gap-3.5 whitespace-nowrap rounded-lg p-3 text-left text-[0.95rem] hover:bg-sidebar-hover',
+    !aberta && 'justify-center',
+  )
+  const classeRotulo = clsx(!aberta && 'hidden')
+
   return (
-    <aside className={`sidebar${aberta ? '' : ' sidebar--fechada'}`}>
-      <div className="sidebar__topo">
-        <span className="sidebar__logo">{aberta ? 'TourGuide' : 'TG'}</span>
+    <aside
+      className={clsx(
+        'flex shrink-0 flex-col overflow-hidden bg-sidebar text-texto-sidebar transition-[width] duration-200 ease-in-out',
+        aberta ? 'w-65' : 'w-18',
+      )}
+    >
+      <div
+        className={clsx(
+          'flex items-center justify-between gap-2 px-4 py-5',
+          !aberta && 'flex-col',
+        )}
+      >
+        <span className="whitespace-nowrap text-xl font-bold">{aberta ? 'TourGuide' : 'TG'}</span>
         <button
-          className="sidebar__alternar"
+          className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg bg-sidebar-hover text-texto-sidebar"
           onClick={onAlternar}
           aria-label={aberta ? 'Fechar menu' : 'Abrir menu'}
           aria-expanded={aberta}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className="size-5 fill-none stroke-current stroke-2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d={aberta ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6'} />
           </svg>
         </button>
       </div>
 
       <nav>
-        <ul className="sidebar__lista">
+        <ul className="flex flex-col gap-1 px-3 py-2">
           {itens.map((item) => (
             <li key={item.id}>
               <button
-                className="sidebar__item"
+                className={classeItem}
                 title={aberta ? undefined : item.rotulo}
                 onClick={item.rota ? () => navigate(item.rota!) : undefined}
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true" className="sidebar__icone">
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-5.5 shrink-0 fill-destaque">
                   {icones[item.id]}
                 </svg>
-                <span className="sidebar__rotulo">{item.rotulo}</span>
+                <span className={classeRotulo}>{item.rotulo}</span>
               </button>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="sidebar__rodape">
+      {/* fica colado no fim da sidebar (que é flex column) */}
+      <div className="mt-auto border-t border-sidebar-hover p-3">
         <button
-          className="sidebar__item sidebar__item--sair"
+          className={classeItem}
           title={aberta ? undefined : 'Sair'}
           onClick={handleSair}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true" className="sidebar__icone">
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="size-5.5 shrink-0 fill-pino">
             <path d="M5 3h8v2H5v14h8v2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm11 4 5 5-5 5-1.4-1.4 2.6-2.6H9v-2h8.2l-2.6-2.6L16 7Z" />
           </svg>
-          <span className="sidebar__rotulo">Sair</span>
+          <span className={classeRotulo}>Sair</span>
         </button>
       </div>
     </aside>

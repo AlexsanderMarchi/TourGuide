@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { MapContainer, Popup, TileLayer, ZoomControl, useMap } from 'react-leaflet'
 import type { Map as LeafletMap } from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+import { classeTituloPopup, detalhePopup, popupDestino } from './estilosPopup'
 import BuscaLugar from './BuscaLugar'
 import MarcadorDestinos from './MarcadorDestinos'
 import useDestinos from '../hooks/useDestinos'
-import type { Lugar } from '../types'
+import type { Lugar } from '../../../types'
 
 // O Leaflet calcula o tamanho do mapa uma vez; quando a sidebar abre ou fecha,
 // a área muda e é preciso avisá-lo depois da transição.
@@ -41,10 +41,10 @@ export default function WorldMap({ sidebarAberta }: WorldMapProps) {
   }
 
   return (
-    <div className="mapa-wrapper">
+    <div className="relative h-full">
       <MapContainer
         ref={setMap}
-        className="mapa"
+        className="size-full cursor-crosshair"
         center={[20, 0]}
         zoom={2}
         minZoom={2}
@@ -76,11 +76,14 @@ export default function WorldMap({ sidebarAberta }: WorldMapProps) {
             autoPan={false}
             eventHandlers={{ remove: () => setLugarBuscado(null) }}
           >
-            <div className="destino">
-              <p className="destino__titulo destino__titulo--busca">Resultado da busca</p>
-              <p className="destino__nome-fixo">{lugarBuscado.nome}</p>
-              <p className="destino__coordenadas">{lugarBuscado.descricao}</p>
-              <button className="destino__marcar" onClick={marcarLugarBuscado}>
+            <div className={popupDestino}>
+              <p className={classeTituloPopup({ busca: true })}>Resultado da busca</p>
+              <p className="m-0 text-base font-semibold text-tinta">{lugarBuscado.nome}</p>
+              <p className={detalhePopup}>{lugarBuscado.descricao}</p>
+              <button
+                className="cursor-pointer self-start rounded-md bg-pino px-3.5 py-2 text-[0.85rem] font-semibold text-white hover:brightness-108"
+                onClick={marcarLugarBuscado}
+              >
                 Marcar como quero ir
               </button>
             </div>
@@ -90,7 +93,7 @@ export default function WorldMap({ sidebarAberta }: WorldMapProps) {
 
       <BuscaLugar onSelecionar={irParaLugar} />
 
-      <p className="mapa__dica">
+      <p className="pointer-events-none absolute bottom-6 left-1/2 z-1000 -translate-x-1/2 whitespace-nowrap rounded-full bg-sidebar px-4 py-2 text-[0.85rem] text-texto-sidebar shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
         {destinos.length === 0
           ? 'Clique no mapa ou busque um lugar para marcar onde você quer ir'
           : `${destinos.length} ${destinos.length === 1 ? 'lugar marcado' : 'lugares marcados'}`}

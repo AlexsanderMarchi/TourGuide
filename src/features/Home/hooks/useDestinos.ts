@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Destino } from '../types'
+import type { Destino } from '../../../types'
 
 const CHAVE = 'tourguide:destinos'
 

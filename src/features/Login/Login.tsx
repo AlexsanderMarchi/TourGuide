@@ -1,6 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../../store/authStore";
+import { botaoEntrar, classeCampo, erro as classeErro, rotulo } from "../../shared/estilos";
+
+const fundo =
+  "grid h-full place-items-center bg-linear-135 from-sidebar to-sidebar-hover p-4";
+const cartao =
+  "flex w-full max-w-95 flex-col gap-4 rounded-[14px] bg-white p-8 shadow-login";
 
 export default function Login() {
   const logado = useAuthStore((estado) => estado.logado);
@@ -84,17 +90,17 @@ export default function Login() {
 
   if (etapa === "a2f") {
     return (
-      <div className="login">
-        <form className="login__cartao" onSubmit={verificarCodigo}>
-          <h1 className="login__logo">TourGuide</h1>
-          <p className="login__subtitulo">
+      <div className={fundo}>
+        <form className={cartao} onSubmit={verificarCodigo}>
+          <h1 className="text-[1.6rem] font-bold text-sidebar">TourGuide</h1>
+          <p className="-mt-2.5 text-[0.9rem] text-suave">
             Digite o código de verificação em duas etapas
           </p>
 
-          <label className="login__rotulo">
+          <label className={rotulo}>
             Código
             <input
-              className="login__campo login__campo--codigo"
+              className={classeCampo({ codigo: true })}
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
               inputMode="numeric"
@@ -103,10 +109,10 @@ export default function Login() {
             />
           </label>
 
-          {erro && <p className="login__erro">{erro}</p>}
+          {erro && <p className={classeErro}>{erro}</p>}
 
           <button
-            className="login__entrar"
+            className={botaoEntrar}
             type="submit"
             disabled={enviando || !codigo.trim()}
           >
@@ -114,7 +120,7 @@ export default function Login() {
           </button>
 
           <button
-            className="login__voltar"
+            className="cursor-pointer p-1 text-[0.9rem] text-suave hover:text-sidebar hover:underline"
             type="button"
             onClick={voltarParaCredenciais}
             disabled={enviando}
@@ -127,15 +133,15 @@ export default function Login() {
   }
 
   return (
-    <div className="login">
-      <form className="login__cartao" onSubmit={enviar}>
-        <h1 className="login__logo">TourGuide</h1>
-        <p className="login__subtitulo">Entre para planejar suas viagens</p>
+    <div className={fundo}>
+      <form className={cartao} onSubmit={enviar}>
+        <h1 className="text-[1.6rem] font-bold text-sidebar">TourGuide</h1>
+        <p className="-mt-2.5 text-[0.9rem] text-suave">Entre para planejar suas viagens</p>
 
-        <label className="login__rotulo">
+        <label className={rotulo}>
           Usuário
           <input
-            className="login__campo"
+            className={classeCampo()}
             value={usuario}
             onChange={(e) => setUsuario(e.target.value)}
             autoComplete="username"
@@ -143,10 +149,10 @@ export default function Login() {
           />
         </label>
 
-        <label className="login__rotulo">
+        <label className={rotulo}>
           Senha
           <input
-            className="login__campo"
+            className={classeCampo()}
             type="password"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
@@ -154,9 +160,9 @@ export default function Login() {
           />
         </label>
 
-        {erro && <p className="login__erro">{erro}</p>}
+        {erro && <p className={classeErro}>{erro}</p>}
 
-        <button className="login__entrar" type="submit" disabled={enviando}>
+        <button className={botaoEntrar} type="submit" disabled={enviando}>
           {enviando ? "Entrando..." : "Entrar"}
         </button>
       </form>

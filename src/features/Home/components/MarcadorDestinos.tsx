@@ -1,13 +1,16 @@
 import { useRef, useState } from 'react'
 import L from 'leaflet'
 import { Marker, Popup, useMapEvents } from 'react-leaflet'
-import type { Destino } from '../types'
+import type { Destino } from '../../../types'
+import { botaoRemover } from '../../../shared/estilos'
+import { classeTituloPopup, detalhePopup, popupDestino } from './estilosPopup'
 
 // Pino próprio em vez do ícone padrão do Leaflet, cujas imagens não são
 // encontradas pelo Vite sem configuração extra.
+// className vazio tira o quadrado branco padrão (.leaflet-div-icon).
 const iconeDestino = L.divIcon({
-  className: 'pino',
-  html: '<svg viewBox="0 0 24 32"><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0Z"/><circle cx="12" cy="12" r="4.5"/></svg>',
+  className: '',
+  html: '<svg viewBox="0 0 24 32" class="size-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.35)]"><path class="fill-pino" d="M12 0C5.4 0 0 5.4 0 12c0 9 12 20 12 20s12-11 12-20C24 5.4 18.6 0 12 0Z"/><circle class="fill-white" cx="12" cy="12" r="4.5"/></svg>',
   iconSize: [28, 38],
   iconAnchor: [14, 38],
   popupAnchor: [0, -34],
@@ -64,19 +67,19 @@ export default function MarcadorDestinos({
         }}
       >
         <Popup>
-          <div className="destino">
-            <p className="destino__titulo">Quero ir</p>
+          <div className={popupDestino}>
+            <p className={classeTituloPopup()}>Quero ir</p>
             <input
-              className="destino__nome"
+              className="rounded-md border border-borda px-2.5 py-2 text-[0.95rem] focus:border-transparent focus:outline-2 focus:outline-destaque"
               value={destino.nome}
               placeholder="Nome do lugar"
               autoFocus={destino.id === recemCriado}
               onChange={(e) => onRenomear(destino.id, e.target.value)}
             />
-            <p className="destino__coordenadas">
+            <p className={detalhePopup}>
               {coordenadas.lat.toFixed(4)}, {coordenadas.lng.toFixed(4)}
             </p>
-            <button className="destino__remover" onClick={() => onRemover(destino.id)}>
+            <button className={botaoRemover} onClick={() => onRemover(destino.id)}>
               Remover
             </button>
           </div>

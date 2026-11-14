@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ConfigProvider, Modal, Upload } from 'antd'
-import { api } from '../api'
+import { api } from '../../../api'
+import clsx from 'clsx'
+import { erro as erroEstilo } from '../../../shared/estilos'
 
 const TAMANHO_MAXIMO_ARQUIVO = 10 * 1024 * 1024
 // a foto é exibida pequena, então reduzimos antes de enviar para não mandar um base64 enorme
@@ -110,21 +112,27 @@ export default function ModalFoto({ aberto, onFechar, onSalvar }: Props) {
             return false
           }}
         >
-          <div className="modal-foto__conteudo">
+          <div className="flex flex-col items-center gap-3 px-4 py-2 text-[0.9rem] text-suave">
             {preview ? (
-              <img className="modal-foto__preview" src={preview} alt="Pré-visualização da nova foto" />
+              <img className="size-30 rounded-full object-cover" src={preview} alt="Pré-visualização da nova foto" />
             ) : (
-              <svg className="modal-foto__icone" viewBox="0 0 24 24" aria-hidden="true">
+              <svg
+                className="size-10 fill-none stroke-destaque stroke-[1.8]"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
               </svg>
             )}
             <p>
-              <strong>Arraste uma imagem aqui</strong> ou clique para selecionar
+              <strong className="text-tinta">Arraste uma imagem aqui</strong> ou clique para selecionar
             </p>
           </div>
         </Upload.Dragger>
 
-        {erro && <p className="login__erro modal-foto__erro">{erro}</p>}
+        {erro && <p className={clsx(erroEstilo, 'mt-3')}>{erro}</p>}
       </Modal>
     </ConfigProvider>
   )

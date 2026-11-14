@@ -1,7 +1,16 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import Sidebar from '../components/Sidebar'
-import type { Usuario } from '../types'
-import { api } from '../api'
+import Sidebar from '../../shared/Sidebar'
+import type { Usuario } from '../../types'
+import { api } from '../../api'
+import clsx from 'clsx'
+import {
+  botaoEntrar,
+  botaoRemover,
+  classeCampo,
+  erro as classeErro,
+  pagina,
+  rotulo,
+} from '../../shared/estilos'
 
 export default function Usuarios() {
   const [sidebarAberta, setSidebarAberta] = useState(true)
@@ -72,16 +81,16 @@ export default function Usuarios() {
   }
 
   return (
-    <div className="app">
+    <div className="flex h-full">
       <Sidebar aberta={sidebarAberta} onAlternar={() => setSidebarAberta((a) => !a)} />
-      <main className="conteudo usuarios">
-        <h1 className="usuarios__titulo">Usuários</h1>
+      <main className={pagina}>
+        <h1 className="text-2xl font-bold text-sidebar">Usuários</h1>
 
-        <form className="usuarios__form" onSubmit={criar}>
-          <label className="login__rotulo">
+        <form className="flex flex-wrap items-end gap-3 rounded-xl bg-white p-5 shadow-cartao" onSubmit={criar}>
+          <label className={clsx(rotulo, 'min-w-40 flex-1')}>
             Login
             <input
-              className="login__campo"
+              className={classeCampo()}
               value={login}
               onChange={(e) => setLogin(e.target.value)}
               autoComplete="off"
@@ -89,10 +98,10 @@ export default function Usuarios() {
             />
           </label>
 
-          <label className="login__rotulo">
+          <label className={clsx(rotulo, 'min-w-40 flex-1')}>
             Senha
             <input
-              className="login__campo"
+              className={classeCampo()}
               type="password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
@@ -101,23 +110,23 @@ export default function Usuarios() {
             />
           </label>
 
-          <button className="login__entrar" type="submit" disabled={enviando}>
+          <button className={botaoEntrar} type="submit" disabled={enviando}>
             {enviando ? 'Criando...' : 'Criar usuário'}
           </button>
         </form>
 
-        {erro && <p className="login__erro">{erro}</p>}
+        {erro && <p className={classeErro}>{erro}</p>}
 
         {carregando ? (
-          <p className="usuarios__vazio">Carregando...</p>
+          <p className="text-[0.9rem] text-suave">Carregando...</p>
         ) : usuarios.length === 0 ? (
-          <p className="usuarios__vazio">Nenhum usuário cadastrado.</p>
+          <p className="text-[0.9rem] text-suave">Nenhum usuário cadastrado.</p>
         ) : (
-          <ul className="usuarios__lista">
+          <ul className="overflow-hidden rounded-xl bg-white shadow-cartao">
             {usuarios.map((usuario) => (
-              <li key={usuario.nome} className="usuarios__item">
+              <li key={usuario.nome} className="flex items-center justify-between gap-3 border-b border-linha px-5 py-3 text-[0.95rem] text-tinta last:border-b-0">
                 <span>{usuario.nome}</span>
-                <button className="destino__remover" onClick={() => remover(usuario)}>
+                <button className={botaoRemover} onClick={() => remover(usuario)}>
                   Excluir
                 </button>
               </li>

@@ -1,10 +1,16 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import CampoSenha from '../components/CampoSenha'
-import ModalFoto from '../components/ModalFoto'
-import Sidebar from '../components/Sidebar'
-import { api } from '../api'
-import { useAuthStore } from '../store/authStore'
+import CampoSenha from './components/CampoSenha'
+import ModalFoto from './components/ModalFoto'
+import Sidebar from '../../shared/Sidebar'
+import { api } from '../../api'
+import { useAuthStore } from '../../store/authStore'
+import clsx from 'clsx'
+import { classeBotao, classeCampo, erro as classeErro, pagina, rotulo } from '../../shared/estilos'
+
+const cartao = 'flex rounded-xl bg-white p-6 shadow-cartao'
+const opcao = 'flex flex-col gap-4 border-t border-linha pt-4'
+const textoEmail = 'text-[0.95rem] text-suave'
 
 type DadosConta = {
   nome: string
@@ -160,26 +166,34 @@ export default function Conta() {
   }
 
   return (
-    <div className="app">
+    <div className="flex h-full">
       <Sidebar aberta={sidebarAberta} onAlternar={() => setSidebarAberta((a) => !a)} />
-      <main className="conteudo conta">
-        <h1 className="conta__titulo">Conta</h1>
+      <main className={pagina}>
+        <h1 className="text-2xl font-bold text-sidebar">Conta</h1>
 
-        <section className="conta__cartao conta__perfil">
+        <section className={clsx(cartao, 'flex-row items-center gap-5')}>
           <button
-            className="conta__foto"
+            className="group relative grid size-20 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full bg-sidebar text-[1.6rem] font-bold text-texto-sidebar disabled:cursor-default"
             type="button"
             onClick={() => setAlterandoFoto(true)}
             disabled={!conta}
             aria-label="Alterar foto de perfil"
           >
             {conta?.fotoPerfil ? (
-              <img src={srcFoto(conta.fotoPerfil)} alt={`Foto de ${conta.nome}`} />
+              <img className="size-full object-cover" src={srcFoto(conta.fotoPerfil)} alt={`Foto de ${conta.nome}`} />
             ) : (
               <span aria-hidden="true">{iniciais}</span>
             )}
-            <span className="conta__foto-sobreposicao" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
+            <span
+              className="absolute inset-0 grid place-items-center bg-black/50 opacity-0 transition-opacity duration-200 group-focus-visible:opacity-100 group-enabled:group-hover:opacity-100"
+              aria-hidden="true"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="size-7 fill-none stroke-white stroke-[1.8]"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
                 <circle cx="12" cy="12.5" r="3.5" />
               </svg>
@@ -196,32 +210,32 @@ export default function Conta() {
           <div>
             {conta ? (
               <>
-                <p className="conta__nome">
+                <p className="flex flex-wrap items-center gap-2 text-[1.2rem] font-bold text-tinta">
                   {conta.nome}
-                  {conta.perfil === 'ADMIN' && <span className="conta__tag">Admin</span>}
+                  {conta.perfil === 'ADMIN' && <span className="rounded-full bg-destaque/15 px-2 py-0.5 text-[0.7rem] font-bold uppercase tracking-[0.05em] text-destaque-escuro">Admin</span>}
                 </p>
-                <p className="conta__email">{conta.email}</p>
+                <p className={textoEmail}>{conta.email}</p>
               </>
             ) : contaErro ? (
-              <p className="login__erro">{contaErro}</p>
+              <p className={classeErro}>{contaErro}</p>
             ) : (
-              <p className="conta__email">Carregando...</p>
+              <p className={textoEmail}>Carregando...</p>
             )}
           </div>
         </section>
 
-        <section className="conta__cartao">
-          <h2 className="conta__subtitulo">Configurações da conta</h2>
+        <section className={clsx(cartao, 'flex-col gap-4')}>
+          <h2 className="text-[1.1rem] font-bold text-sidebar">Configurações da conta</h2>
 
-          <div className="conta__opcao conta__opcao--coluna">
-            <div className="conta__opcao-linha">
+          <div className={opcao}>
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="conta__opcao-titulo">Senha</p>
-                <p className="conta__opcao-descricao">Altere a senha usada para entrar no TourGuide.</p>
+                <p className="font-semibold text-tinta">Senha</p>
+                <p className="text-[0.85rem] text-suave">Altere a senha usada para entrar no TourGuide.</p>
               </div>
               {!alterandoSenha && (
                 <button
-                  className="conta__botao conta__botao--secundario"
+                  className={classeBotao({ secundario: true })}
                   type="button"
                   onClick={() => {
                     setAlterandoSenha(true)
@@ -234,11 +248,10 @@ export default function Conta() {
             </div>
 
             {alterandoSenha && (
-              <form className="conta__a2f" onSubmit={alterarSenha}>
-                <label className="login__rotulo">
+              <form className="flex flex-col gap-4" onSubmit={alterarSenha}>
+                <label className={rotulo}>
                   Senha atual
                   <CampoSenha
-                    className="login__campo"
                     value={senhaAtual}
                     onChange={(e) => setSenhaAtual(e.target.value)}
                     autoComplete="current-password"
@@ -246,38 +259,36 @@ export default function Conta() {
                   />
                 </label>
 
-                <label className="login__rotulo">
+                <label className={rotulo}>
                   Nova senha
                   <CampoSenha
-                    className="login__campo"
                     value={novaSenha}
                     onChange={(e) => setNovaSenha(e.target.value)}
                     autoComplete="new-password"
                   />
                 </label>
 
-                <label className="login__rotulo">
+                <label className={rotulo}>
                   Confirmar nova senha
                   <CampoSenha
-                    className="login__campo"
                     value={novaSenhaConfirmacao}
                     onChange={(e) => setNovaSenhaConfirmacao(e.target.value)}
                     autoComplete="new-password"
                   />
                 </label>
 
-                {senhaErro && <p className="login__erro">{senhaErro}</p>}
+                {senhaErro && <p className={classeErro}>{senhaErro}</p>}
 
-                <div className="conta__acoes">
+                <div className="flex flex-wrap gap-3">
                   <button
-                    className="conta__botao"
+                    className={classeBotao()}
                     type="submit"
                     disabled={alterandoEnvio || !senhaAtual || !novaSenha || !novaSenhaConfirmacao}
                   >
                     {alterandoEnvio ? 'Salvando...' : 'Salvar nova senha'}
                   </button>
                   <button
-                    className="conta__botao conta__botao--secundario"
+                    className={classeBotao({ secundario: true })}
                     type="button"
                     onClick={fecharAlterarSenha}
                     disabled={alterandoEnvio}
@@ -288,22 +299,28 @@ export default function Conta() {
               </form>
             )}
 
-            {senhaSucesso && <p className="conta__sucesso">{senhaSucesso}</p>}
+            {senhaSucesso && <p className="text-[0.85rem] text-sucesso">{senhaSucesso}</p>}
           </div>
 
-          <div className="conta__opcao conta__opcao--coluna">
-            <div className="conta__opcao-linha">
+          <div className={opcao}>
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="conta__opcao-titulo">Autenticação de dois fatores</p>
-                <p className="conta__opcao-descricao">
+                <p className="font-semibold text-tinta">Autenticação de dois fatores</p>
+                <p className="text-[0.85rem] text-suave">
                   {a2fAtiva
                     ? 'Ao entrar, será pedido o código do seu app autenticador.'
                     : 'Deseja ativar a autenticação de dois fatores? Ao entrar, além da senha, será pedido um código do app autenticador.'}
                 </p>
               </div>
               {a2fAtiva ? (
-                <span className="conta__ativa">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                <span className="inline-flex shrink-0 items-center gap-1.5 text-[0.9rem] font-semibold text-sucesso">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="size-5.5 rounded-full bg-sucesso fill-none stroke-white stroke-3 p-0.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M5 12.5l4.5 4.5L19 7.5" />
                   </svg>
                   Ativada
@@ -311,7 +328,7 @@ export default function Conta() {
               ) : (
                 etapa === 'pergunta' && (
                   <button
-                    className="conta__botao"
+                    className={classeBotao()}
                     type="button"
                     onClick={configurarA2f}
                     disabled={enviando}
@@ -323,20 +340,20 @@ export default function Conta() {
             </div>
 
             {!a2fAtiva && etapa === 'qrcode' && (
-              <form className="conta__a2f" onSubmit={ativarA2f}>
-                <ol className="conta__passos">
+              <form className="flex flex-col gap-4" onSubmit={ativarA2f}>
+                <ol className="list-decimal pl-5 text-[0.9rem] text-tinta">
                   <li>Leia o QR code com um app autenticador (Google Authenticator, Authy etc.).</li>
                   <li>Digite o código de 6 dígitos que aparecer no app.</li>
                 </ol>
 
-                <div className="conta__qrcode">
+                <div className="self-center rounded-xl border border-linha bg-white p-3 leading-0">
                   <QRCodeSVG value={urlQrCode} size={180} />
                 </div>
 
-                <label className="login__rotulo">
+                <label className={rotulo}>
                   Código
                   <input
-                    className="login__campo login__campo--codigo"
+                    className={classeCampo({ codigo: true })}
                     value={codigo}
                     onChange={(e) => setCodigo(e.target.value)}
                     inputMode="numeric"
@@ -345,12 +362,12 @@ export default function Conta() {
                   />
                 </label>
 
-                <div className="conta__acoes">
-                  <button className="conta__botao" type="submit" disabled={enviando || !codigo.trim()}>
+                <div className="flex flex-wrap gap-3">
+                  <button className={classeBotao()} type="submit" disabled={enviando || !codigo.trim()}>
                     {enviando ? 'Ativando...' : 'Ativar autenticação de dois fatores'}
                   </button>
                   <button
-                    className="conta__botao conta__botao--secundario"
+                    className={classeBotao({ secundario: true })}
                     type="button"
                     onClick={cancelar}
                     disabled={enviando}
@@ -361,7 +378,7 @@ export default function Conta() {
               </form>
             )}
 
-            {erro && <p className="login__erro">{erro}</p>}
+            {erro && <p className={classeErro}>{erro}</p>}
           </div>
         </section>
       </main>

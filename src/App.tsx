@@ -1,9 +1,10 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import RotaProtegida from './auth/RotaProtegida'
-import Conta from './pages/Conta'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Usuarios from './pages/Usuarios'
+
+import Login from './features/Login/Login'
+import Home from './features/Home/Home'
+import Usuarios from './features/Usuarios/Usuarios'
+import Conta from './features/Conta/Conta'
 
 export default function App() {
   return (

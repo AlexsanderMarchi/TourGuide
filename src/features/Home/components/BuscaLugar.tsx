@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import type { Lugar } from '../types'
+import type { Lugar } from '../../../types'
 
 // Busca de lugares pelo Nominatim (OpenStreetMap). A política de uso pede no
 // máximo 1 requisição por segundo, por isso a busca só roda ao enviar o
@@ -39,6 +39,9 @@ async function buscarLugares(termo: string): Promise<Lugar[]> {
     ],
   }))
 }
+
+const classeStatus =
+  'mt-2 rounded-[10px] bg-white px-3.5 py-2.5 text-[0.85rem] text-status shadow-flutuante'
 
 interface BuscaLugarProps {
   onSelecionar: (lugar: Lugar) => void
@@ -80,14 +83,23 @@ export default function BuscaLugar({ onSelecionar }: BuscaLugarProps) {
   }
 
   return (
-    <div className="busca">
-      <form className="busca__form" role="search" onSubmit={enviar}>
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="busca__icone">
+    <div className="absolute left-4 top-4 z-1000 w-[min(360px,calc(100%-32px))] font-sans">
+      <form
+        className="flex items-center gap-2 rounded-[10px] bg-white px-3 shadow-flutuante focus-within:outline-2 focus-within:outline-destaque"
+        role="search"
+        onSubmit={enviar}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          className="size-5 shrink-0 fill-none stroke-suave stroke-2"
+          strokeLinecap="round"
+        >
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-4-4" />
         </svg>
         <input
-          className="busca__campo"
+          className="min-w-0 flex-1 bg-transparent py-3 text-[0.95rem] outline-none [&::-webkit-search-cancel-button]:hidden"
           type="search"
           value={termo}
           onChange={(e) => setTermo(e.target.value)}
@@ -95,23 +107,31 @@ export default function BuscaLugar({ onSelecionar }: BuscaLugarProps) {
           aria-label="Buscar lugar"
         />
         {termo && (
-          <button type="button" className="busca__limpar" onClick={limpar} aria-label="Limpar busca">
+          <button
+            type="button"
+            className="cursor-pointer px-1 text-[1.4rem] leading-none text-suave"
+            onClick={limpar}
+            aria-label="Limpar busca"
+          >
             ×
           </button>
         )}
       </form>
 
-      {carregando && <p className="busca__status">Buscando…</p>}
-      {erro && <p className="busca__status">Não foi possível buscar agora. Tente de novo.</p>}
-      {resultados?.length === 0 && <p className="busca__status">Nenhum lugar encontrado.</p>}
+      {carregando && <p className={classeStatus}>Buscando…</p>}
+      {erro && <p className={classeStatus}>Não foi possível buscar agora. Tente de novo.</p>}
+      {resultados?.length === 0 && <p className={classeStatus}>Nenhum lugar encontrado.</p>}
 
       {resultados && resultados.length > 0 && (
-        <ul className="busca__resultados">
+        <ul className="mt-2 overflow-hidden rounded-[10px] bg-white shadow-flutuante">
           {resultados.map((lugar) => (
-            <li key={lugar.id}>
-              <button className="busca__resultado" onClick={() => selecionar(lugar)}>
-                <span className="busca__resultado-nome">{lugar.nome}</span>
-                <span className="busca__resultado-descricao">{lugar.descricao}</span>
+            <li key={lugar.id} className="border-b border-linha last:border-b-0">
+              <button
+                className="flex w-full cursor-pointer flex-col gap-0.5 px-3.5 py-2.5 text-left hover:bg-hover-claro"
+                onClick={() => selecionar(lugar)}
+              >
+                <span className="text-[0.95rem] font-semibold text-tinta">{lugar.nome}</span>
+                <span className="truncate text-[0.78rem] text-suave">{lugar.descricao}</span>
               </button>
             </li>
           ))}
